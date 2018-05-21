@@ -11,14 +11,22 @@ const data = require('./db/notes');
 // ADD STATIC SERVER HERE
 app.use(express.static('public'));
 
-app.get('/api/notes', (req, res) => {
-	res.json(data);
-});
+// app.get('/api/notes', (req, res) => {
+// 	res.json(data);
+// });
 
 app.get('/api/notes/:id', (req, res) => {
-	console.log(req.params);
+	
 	const findNoteById = data.find(note => note.id === Number(req.params.id)); 
 	res.json(findNoteById);
+});
+
+app.get('/api/notes', (req, res) => {
+	const searchParam = req.query.searchTerm;
+	// console.log(searchParam);
+	const filteredSearch = data.filter(note => note.title.includes(searchParam));
+	res.json(filteredSearch);
+	// res.json(data);
 });
 
 
