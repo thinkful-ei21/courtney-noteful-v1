@@ -1,13 +1,16 @@
 'use strict';
 
-// Load array of notes
-// const data = require('./db/notes');
+
 console.log('Hello Noteful!');
 const express = require('express');
 const app = express();
 const data = require('./db/notes');
 const { PORT } = require('./config');
 const {requestLogger} = require('./middleware/logger');
+
+//DATABASE
+const simDB = require('./db/simDB');  
+const notes = simDB.initialize(data);
 
 
 app.use(express.static('public'));
@@ -29,11 +32,20 @@ app.get('/api/notes/:id', (req, res) => {
 	}
 });
 
-app.get('/api/notes', (req, res) => {
-	const searchParam = req.query.searchTerm;
-	const filteredSearch = data.filter(note => note.title.includes(searchParam));
-	res.json(filteredSearch);
+app.get('/api/notes', (req, res, next) => {
+	// const searchParam = req.query.searchTerm;
+	// const filteredSearch = data.filter(note => note.title.includes(searchParam));
+	// res.json(filteredSearch);
+
+	const { searchTerm } = req.query;
+	notes.filter(searchTerm, (err, list) => {
+    if (err) {
+      return next(err); // goes to error handler
+    }
+    res.json(list); // responds with filtered array
+  });
 });
+
 
 app.get('/boom', (req, res, next) => {
   throw new Error('Boom!!');
