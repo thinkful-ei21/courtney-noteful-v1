@@ -21,15 +21,22 @@ app.use(requestLogger);
 // 	res.json(data);
 // });
 
-app.get('/api/notes/:id', (req, res) => {
-	const findNoteById = data.find(note => note.id === Number(req.params.id));
-	if(findNoteById) {
-		res.json(findNoteById);	
-	} else {
-		var err = new Error('Not Found');
-	  err.status = 404;
-	  res.status(404).json({ message: 'Not Found' });
-	}
+app.get('/api/notes/:id', (req, res, next) => {
+	// const findNoteById = data.find(note => note.id === Number(req.params.id));
+	// if(findNoteById) {
+	// 	res.json(findNoteById);	
+	// } else {
+	// 	var err = new Error('Not Found');
+	//   err.status = 404;
+	//   res.status(404).json({ message: 'Not Found' });
+	// }
+
+	notes.find(req.params.id, (err, list) => {
+		if (err) {
+			return next(err);
+		}
+		res.json(list);
+	});
 });
 
 app.get('/api/notes', (req, res, next) => {
