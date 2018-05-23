@@ -1,12 +1,8 @@
 'use strict';
 
 
-function requestLogger(req, res, next) {
-	const today = new Date();
-	console.log(`${today.toLocaleDateString()} ${today.toLocaleTimeString()} ${req.method} ${req.url}`);
-	next();
-}
+const morgan = require('morgan');
+const logger = morgan('dev');
 
-
-module.exports = {requestLogger};
+module.exports = logger;
 
