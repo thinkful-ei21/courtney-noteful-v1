@@ -15,11 +15,37 @@ const notes = simDB.initialize(data);
 
 app.use(express.static('public'));
 app.use(requestLogger);
+app.use(express.json());
 
 //GETS ALL NOTES
 // app.get('/api/notes', (req, res) => {
 // 	res.json(data);
 // });
+
+app.put('/api/notes/:id', (req, res, next) => {
+  const id = req.params.id;
+
+  /***** Never trust users - validate input *****/
+  const updateObj = {};
+  const updateFields = ['title', 'content'];
+
+  updateFields.forEach(field => {
+    if (field in req.body) {
+      updateObj[field] = req.body[field];
+    }
+  });
+
+  notes.update(id, updateObj, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      next();
+    }
+  });
+});
 
 app.get('/api/notes/:id', (req, res, next) => {
 	// const findNoteById = data.find(note => note.id === Number(req.params.id));
@@ -39,12 +65,14 @@ app.get('/api/notes/:id', (req, res, next) => {
 	});
 });
 
+
+
 app.get('/api/notes', (req, res, next) => {
 	// const searchParam = req.query.searchTerm;
 	// const filteredSearch = data.filter(note => note.title.includes(searchParam));
 	// res.json(filteredSearch);
 
-	const { searchTerm } = req.query;
+	const {searchTerm} = req.query;
 	notes.filter(searchTerm, (err, list) => {
     if (err) {
       return next(err); // goes to error handler
