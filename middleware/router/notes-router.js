@@ -77,6 +77,22 @@ router.get('/notes/:id', (req, res, next) => {
 });
 
 
+router.delete('/notes/:id', (req, res, next) => {
+	
+	notes.delete(req.params.id, (err, len) => {
+		if (err) {
+			res.status(500).end();
+		} else {
+			if (len) {
+				res.status(204).end();
+			} else {
+				res.status(404).end();
+			}
+		}
+	});
+});
+
+
 
 router.get('/notes', (req, res, next) => {
 	// const searchParam = req.query.searchTerm;
@@ -96,5 +112,13 @@ router.get('/notes', (req, res, next) => {
 router.get('/boom', (req, res, next) => {
   throw new Error('Boom!!');
 });
+
+
+
+
+
+
+
+
 
 module.exports = router;
