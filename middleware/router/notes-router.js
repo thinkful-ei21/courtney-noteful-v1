@@ -58,6 +58,25 @@ router.post('/notes', (req, res, next) => {
   });
 });
 
+
+
+
+router.delete('/notes/:id', (req, res, next) => {
+	
+	notes.delete(req.params.id, (err, len) => {
+		if (err) {
+			res.status(500).end();
+		} else {
+			if (len) {
+				res.status(204).end();
+			} else {
+				res.status(404).end();
+			}
+		}
+	});
+});
+
+
 router.get('/notes/:id', (req, res, next) => {
 	// const findNoteById = data.find(note => note.id === Number(req.params.id));
 	// if(findNoteById) {
@@ -90,41 +109,40 @@ router.get('/notes/:id', (req, res, next) => {
 });
 
 
-router.delete('/notes/:id', (req, res, next) => {
-	
-	notes.delete(req.params.id, (err, len) => {
-		if (err) {
-			res.status(500).end();
-		} else {
-			if (len) {
-				res.status(204).end();
-			} else {
-				res.status(404).end();
-			}
-		}
-	});
-});
-
-
 
 router.get('/notes', (req, res, next) => {
 	// const searchParam = req.query.searchTerm;
 	// const filteredSearch = data.filter(note => note.title.includes(searchParam));
 	// res.json(filteredSearch);
 
+	// const {searchTerm} = req.query;
+	// notes.filter(searchTerm, (err, list) => {
+ //    if (err) {
+ //      return next(err); // goes to error handler
+ //    }
+ //    res.json(list); // responds with filtered array
+ //  });
+
 	const {searchTerm} = req.query;
-	notes.filter(searchTerm, (err, list) => {
-    if (err) {
-      return next(err); // goes to error handler
-    }
-    res.json(list); // responds with filtered array
-  });
+ 	notes.filter(searchTerm)
+ 		.then(note => {
+ 			if (note) {
+ 				res.json(note);
+ 			} else {
+ 				next();
+ 			}
+ 		})
+ 		.catch(err => {
+ 			next(err);
+ 		});
 });
 
 
-router.get('/boom', (req, res, next) => {
-  throw new Error('Boom!!');
-});
+
+
+// router.get('/boom', (req, res, next) => {
+//   throw new Error('Boom!!');
+// });
 
 
 
