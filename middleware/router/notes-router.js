@@ -47,6 +47,8 @@ router.put('/notes/:id', (req, res, next) => {
   	});
 });
 
+
+
 router.post('/notes', (req, res, next) => {
   const { title, content } = req.body;
 
@@ -58,16 +60,28 @@ router.post('/notes', (req, res, next) => {
     return next(err);
   }
 
-  notes.create(newItem, (err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (item) {
-      res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-    } else {
-      next();
-    }
-  });
+  // notes.create(newItem, (err, item) => {
+  //   if (err) {
+  //     return next(err);
+  //   }
+  //   if (item) {
+  //     res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+  //   } else {
+  //     next();
+  //   }
+  // });
+
+  notes.create(newItem)
+  	.then(note => {
+  		if (note) {
+  			res.json(note);
+  		} else {
+  			next();
+  		}
+  	})
+  	.catch(err => {
+  		next(err);
+  	});
 });
 
 
