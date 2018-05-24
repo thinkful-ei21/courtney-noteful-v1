@@ -89,17 +89,29 @@ router.post('/notes', (req, res, next) => {
 
 router.delete('/notes/:id', (req, res, next) => {
 	
-	notes.delete(req.params.id, (err, len) => {
-		if (err) {
-			res.status(500).end();
-		} else {
-			if (len) {
-				res.status(204).end();
+	// notes.delete(req.params.id, (err, len) => {
+	// 	if (err) {
+	// 		res.status(500).end();
+	// 	} else {
+	// 		if (len) {
+	// 			res.status(204).end();
+	// 		} else {
+	// 			res.status(404).end();
+	// 		}
+	// 	}
+	// });
+
+	notes.delete(req.params.id)
+		.then(note => {
+			if (note) {
+				res.json(note);
 			} else {
-				res.status(404).end();
+				next();
 			}
-		}
-	});
+		})
+		.catch(err => {
+			next(err);
+		});
 });
 
 
