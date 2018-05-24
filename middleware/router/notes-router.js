@@ -68,12 +68,25 @@ router.get('/notes/:id', (req, res, next) => {
 	//   res.status(404).json({ message: 'Not Found' });
 	// }
 
-	notes.find(req.params.id, (err, list) => {
-		if (err) {
-			return next(err);
-		}
-		res.json(list);
-	});
+
+// 	notes.find(req.params.id, (err, list) => {
+// 		if (err) {
+// 			return next(err);
+// 		}
+// 		res.json(list);
+// 	});
+// });
+	notes.find(req.params.id)
+    .then(item => {
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
 });
 
 
