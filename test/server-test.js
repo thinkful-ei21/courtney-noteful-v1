@@ -50,7 +50,7 @@ describe('404 handler', function () {
 });
 
 
-describe('API tests', function () {
+describe('GET API tests', function () {
 
   it('GET request "/api/notes" should return all notes', function () {
   	const validTerm = 'cat';
@@ -86,7 +86,81 @@ describe('API tests', function () {
  
       });
   });
+
+  it('GET request "/api/notes/:id" should return a specifc note', function() {
+  	return chai.request(app)
+  		.get('/api/notes/1000')
+  		.then(function(res) {
+  			expect(res).to.have.status(200);
+  			expect(res).to.be.json;
+  			expect(res.body).to.be.a("object");
+  			expect(res.body).to.include.keys("id", "title", "content");
+  			expect(res.body.id).to.equal(1000);
+  		});
+
+  });
+
+  it("GET request '/api/notes/DOESNOTEXIST' should return 404 response", function() {
+  	return chai.request(app)
+  		.get('/api/notes/DOESNOTEXIST')
+  		.then(function(res) {
+  			expect(res).to.have.status(404);
+  		});
+  });
 });
+
+
+describe("POST API tests", function() {
+
+	it("POST request should create new note", function() {
+		const newNote = {
+			"title": "More Cats",
+			"content": "More undeniably cute fluffiness"
+		};
+
+		return chai.request(app)
+			.post('/api/notes')
+			.send(newNote)
+			.then(function(res) {
+				expect(res).to.have.status(201);
+				expect(res).to.be.json;
+				expect(res.body).to.be.a("object");
+				expect(res.body).to.include.keys("id", "title", "content");
+				expect(res.body.id).to.equal(1010);
+			});
+	});
+
+	it("POST request should return error if title is missing", function() {
+		const emptyNote = {};
+
+		return chai.request(app)
+			.post("/api/notes")
+			.send(emptyNote)
+			.then(function(res) {
+				expect(res).to.have.status(400);
+				expect(res).to.be.json;
+				expect(res.body).to.be.a("object");
+			});
+	});
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
