@@ -101,8 +101,13 @@ app.use(function (err, req, res, next) {
 });
 
 
-app.listen(PORT, function () {
-  console.info(`Server listening on ${this.address().port}`);
-}).on('error', err => {
-  console.error(err.message);
-});
+// Listen for incoming connections
+if (require.main === module) {
+  app.listen(PORT, function () {
+    console.info(`Server listening on ${this.address().port}`);
+  }).on('error', err => {
+    console.error(err);
+  });
+}
+
+module.exports = app; // Export for testing
