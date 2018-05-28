@@ -136,12 +136,77 @@ describe("POST API tests", function() {
 		return chai.request(app)
 			.post("/api/notes")
 			.send(emptyNote)
+      .catch(err => err.response)
 			.then(function(res) {
 				expect(res).to.have.status(400);
 				expect(res).to.be.json;
 				expect(res.body).to.be.a("object");
 			});
 	});
+});
+
+
+describe("PUT API tests", function() {
+
+  it("PUT request should update note at specifc id", function() {
+    const updateNote = {
+      "title": "More Cats",
+      "content": "More undeniably cute fluffiness"
+    };
+
+    return chai.request(app)
+      .put("/api/notes/1000")
+      .send("updateNote")
+      .then(function(res) {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a("object");
+        expect(res.body).to.include.keys("id", "title", "content");
+
+        expect(res.body.id).to.equal(1000);
+      });
+  });
+
+  it("PUT request should return error if title is missing", function() {
+    const emptyNote = {};
+
+    return chai.request(app)
+      .put("/api/notes/1000")
+      .send(emptyNote)
+      .catch(err => err.response)
+      .then(function(res) {
+        expect(res).to.have.status(400);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a("object");
+      });
+  });
+
+  it("PUT request should return 404 error for incorrect id", function() {
+    const updateNote = {
+      "title": "More Cats",
+      "content": "More undeniably cute fluffiness"
+    };
+
+    return chai.request(app)
+      .put("/api/notes/blahblahblah")
+      .send(updateNote)
+      .catch(err => err.response)
+      .then(res => {
+        expect(res).to.have.status(404);
+      });
+  });
+});
+
+
+describe("DELETE API tests", function() {
+
+  it("DELETE request should delete note at specifc id", function() {
+    return chai.request(app)
+      .delete("/api/notes/1000")
+      .then(function(res) {
+        expect(res).to.have.status(204);
+      });
+  });
 });
 
 
